@@ -13,7 +13,8 @@ var SYSTEM_EVENTS = {
 function MQTTClient(options) {
   EventEmitter(this);
   this.uri = options.uri || 'mqtt://' + options.host + ':' + (options.port || 8080);
-  if (this.uri.substring(this.uri.length - 1) !== '/') this.uri += '/';
+  this.port = options.port;
+  this.path = options.path || '/mqtt';
   this.disconnectNormally = false;
   this.connected = false;
   this.reconnectTry = 0;
@@ -52,7 +53,8 @@ MQTTClient.prototype._setupConnection = function() {
     } catch (e) {
     }
   }
-  this.connection = new Paho.MQTT.Client(this.uri, this.clientId);
+  
+  this.connection = new Paho.MQTT.Client(this.uri, this.port, this.path, this.clientId);
   this.connection.onConnectionLost = this._connectionLost.bind(this);
   this.connection.onMessageArrived = this._onMessageArrived.bind(this);
 };
